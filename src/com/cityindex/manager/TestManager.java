@@ -1,178 +1,122 @@
 package com.cityindex.manager;
 
 import com.cityindex.exception.TestException;
+import com.cityindex.json.Status;
+import com.cityindex.json.TestCaseInfo;
+import com.cityindex.param.*;
 import com.cityindex.utils.*;
 import io.appium.java_client.AppiumDriver;
-import java.util.Date;
+import static com.cityindex.utils.LoggerUtil.i;
 
 public class TestManager {
-    private static volatile TestManager instance;
+//    private static volatile TestManager instance;
 
-    public static void setDriver(AppiumDriver driver) {
-        TestManager.driver = driver;
-    }
+    private static TestManager testManager;
+    public TestCaseInfo testCaseInfo;
+    private String deviceId = null;
+    private String testClass = null;
+    private String deviceName = null;
+    private String osDevice = null;
+    private String login = null;
+    private String password = null;
+    public ConfigManager configManager = null;
+    public static AppiumDriver driver;
+    private ParamsParser paramsParser;
+    private String pathToBuild;
 
-    private static FileWorker fileWorker;
-    private static FileWorker fileLogWorker;
-    private static String deviceId = null;
-    private static String buildName = null;
-    private static String network = null;
-    private static String os_system = null;
-    private static String hwDevice = null;
-    private static String osDevice = null;
-    private static String dumpKpiInfo = null;
-    private static String account = null;
-    private static String password = null;
-    private static int timeout = 0;
-    private static String[] args = null;
-    private static long mLastDumpTime = 0;
-
-    private static long mStartTime = 0;
-    private static long mEndTime = 0;
-    public static ConfigManager configManager = null;
-    private static AppiumDriver driver;
-
-    private TestManager(String[] args) {
-        this.args = args;
+    private TestManager() {
+//        this.args = args;
         configManager = new ConfigManager();
-        init();
-        fileWorker = new FileWorker();
-        fileLogWorker = new FileWorker(MainConstants.FILE_NAME_LOG_TESTS);
+        testCaseInfo = new TestCaseInfo();
+        initProperties();
     }
 
-
-
-    public void init(){
-        if (args.length > 0)
-            MainConstants.TEST_NAME = args[0].toString();
-        if (args.length > 1) {
-            dumpKpiInfo = args[1].toString();
-        }
-        if (args.length > 2){
-            deviceId = args[2].toString();
-        }else {
-            deviceId = configManager.getProperty(ConfigurationParametersEnum.IOS_DEVICE_ID.name());
-        }
-        if (args.length > 3){
-            buildName = args[3].toString();
-        }else {
-            buildName = configManager.getProperty(ConfigurationParametersEnum.BUILD_NAME.name());
-        }
-        if(args.length > 4){
-            hwDevice = args[4].toString();
-        }else{
-            hwDevice = configManager.getProperty(ConfigurationParametersEnum.IOS_DEVICE.name());
-        }
-        if (args.length > 5){
-            account = args[5].toString();
-        }else {
-            account = configManager.getProperty(ConfigurationParametersEnum.LOGIN.name());
-        }
-        if (args.length > 6){
-            password = args[6].toString();
-        }else{
-            password = configManager.getProperty(ConfigurationParametersEnum.PASSWORD.name());
-        }
-        if (args.length > 7){
-            parseTimeout(args[7].toString());
-        }else{
-            parseTimeout(TestManager.configManager.getProperty(ConfigurationParametersEnum.TIMEOUT.name()));
-        }
-
-        network = "";
-        os_system = TestManager.configManager.getProperty(ConfigurationParametersEnum.IOS_PLATFORM_NAME.name());
-        osDevice = TestManager.configManager.getProperty(ConfigurationParametersEnum.IOS_PLATFORM_VERSION.name());
+    private void initProperties(){
+        paramsParser = ParamsParser.getInstance();
+        pathToBuild = paramsParser.getPathToBuild() == null ?
+                configManager.getProperty(ConfigParam.BUILD_PATH.name()) : paramsParser.getPathToBuild();
+        login = configManager.getProperty("LOGIN");
+        password = configManager.getProperty("PASSWORD");
+        deviceId = paramsParser.getDeviceUuid() == null ?
+                configManager.getProperty(ConfigParam.IOS_DEVICE_ID.name()) : paramsParser.getDeviceUuid();
+        testClass = paramsParser.getTestClass();
+        osDevice = paramsParser.getDeviceOS() == null ?
+                configManager.getProperty(ConfigParam.IOS_PLATFORM_VERSION.name()) : paramsParser.getDeviceOS();
+        deviceName = paramsParser.getDeviceName();
 
     }
 
-    private void parseTimeout(String line){
-        try{
-            timeout = Integer.parseInt(line);
-        }catch (Throwable ex){
-            LoggerUtils.e("Used default timeout = " + MainConstants.DEFAULT_TIMEOUT + ex.getMessage());
-            timeout = MainConstants.DEFAULT_TIMEOUT;
-        }
+    public void setDriver(AppiumDriver driver) {
+        this.driver = driver;
     }
 
-    public static TestManager getInstance(String[] args){
-        if(instance == null)
-            synchronized (TestManager.class){
-                if(instance == null)
-                    instance = new TestManager(args);
-            }
-        return instance;
+    public AppiumDriver getDriver(){
+        return driver;
     }
 
-    public static TestManager getInstance(){
-        return getInstance(args);
+    public String getTestProperty(String key) {
+        return configManager.getProperty(key);
     }
 
-    public static ItemLog addLogParams(Date date, String testAction, String testData, boolean testResult){
-        ItemLog itemLog = new ItemLog();
-        itemLog.setBuild(getBuildName());
-        itemLog.setDeviceId(getDeviceId());
-        itemLog.setNet(getNetwork());
-        itemLog.setHw(getHwDevice());
-        itemLog.setOs(getOsDevice());
-        itemLog.setSlaveId("");
-        itemLog.setDate(date, "");
-        itemLog.setTime(date, "");
-        itemLog.setStartTime(mStartTime);
-        itemLog.setEndTime(mEndTime, mLastDumpTime);
-        itemLog.setTestId("AlchemyKpi");
-        itemLog.setTestAction(testAction);
-        itemLog.setTestData(testData);
-        itemLog.setTestResult(testResult);
-        return itemLog;
+    public static TestManager getInstance() {
+        if(testManager == null)
+            testManager = new TestManager();
+        return testManager;
     }
 
-
-    public static String getDeviceId() {
-        return deviceId;
+    public void writeResult() {
+        testCaseInfo.writeResult(ParamsParser.getInstance().getPathToResultsFolder() + "/result.json");
     }
 
-    public static String getBuildName() {
-        return buildName;
+    public ParamsParser getParamsParser() {
+        return paramsParser;
     }
 
-    public static String getNetwork() {
-        return network;
+    public ConfigManager getConfigManagerManager() {
+        return configManager;
     }
 
-    public static String getOs_system() {
-        return os_system;
+    public String getPathToBuild() {
+        return pathToBuild;
     }
 
-    public static String getHwDevice() {
-        return hwDevice;
+    public String getDeviceName() {
+        return deviceName;
     }
 
-    public static String getOsDevice() {
-        return osDevice;
+    public void setTestCaseInfo(TestCaseInfo testCaseInfo) {
+        this.testCaseInfo = testCaseInfo;
     }
 
-    public static String getDumpKpiInfo() {
-        return dumpKpiInfo;
+    public TestCaseInfo getTestCaseInfo() {
+        return testCaseInfo;
     }
 
-    public static String getAccount() {
-        return account;
+    public String getOsDevice(){return osDevice;}
+    public String getDeviceId(){return deviceId;}
+
+    public void retest(String message) throws TestException {
+        testCaseInfo.setMessage(message);
+        testCaseInfo.setStatusId(4);
+        throw new TestException(message, driver).retest();
     }
 
-    public static String getPassword() {
-        return password;
+    public void failTest(String message) throws TestException {
+        testCaseInfo.setMessage(message);
+        testCaseInfo.setStatusId(Status.FAILED);
+        throw new TestException(message, driver).failTest();
     }
 
-    public static int getTimeout() {
-        return timeout;
+    public String getLogin() {
+        return login;
     }
 
-    public static void failTest(String errorMsg) throws TestException{
-        throw new TestException(errorMsg, driver).failTest();
-    }
-
-    public static void retestTest(String errorMsg)throws TestException{
-        throw new TestException(errorMsg, driver).retest();
+    public void addStep(String step) {
+        i("########################################################");
+        i("STEP: " + step);
+//        ScreenShotTaker.getInstance().takeScreenShot("before_" + step.replace("\"? ?\\.?,?:?", "_").replaceAll("\"?'?", ""));
+        testCaseInfo.addStep(step);
+        i("########################################################");
     }
 
 }

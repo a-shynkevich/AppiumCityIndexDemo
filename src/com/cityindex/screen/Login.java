@@ -2,23 +2,21 @@ package com.cityindex.screen;
 
 import com.cityindex.exception.TestException;
 import com.cityindex.manager.TestManager;
-import com.cityindex.utils.LanguageChecker;
-import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
-import static com.cityindex.utils.LoggerUtils.e;
-import static com.cityindex.utils.LoggerUtils.i;
+import static com.cityindex.utils.LoggerUtil.e;
+import static com.cityindex.utils.LoggerUtil.i;
 
 public class Login extends Screen{
+
     private WebElement element;
 
-    public Login(AppiumDriver driver) {
-        super(driver);
+    public Login(TestManager testManager) {
+        super(testManager);
     }
 
-    public void signIn() throws TestException {
+    public boolean signIn() throws TestException {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -33,22 +31,19 @@ public class Login extends Screen{
         By xpathCloseBtn = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIAButton[1]");
         By xpathTabBar = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIATabBar[1]");
 
-
         if (testHelper.waitWhileElementExist(xpathRequestError, 5000)){
             element = driver.findElement(xpathRequestError);
             element.click();
         }
         if(!testHelper.waitWhileElementExist(xpathForLoginBtnInMarkets, 15000)){
-            TestManager.retestTest("Login button in markets was not found");
+            testManager.retest("Login button in markets was not found");
         }
+        testManager.addStep("test");
+        testManager.testCaseInfo.writeResult("result.json");
         element = driver.findElement(xpathForLoginBtnInMarkets);
-//        element = driver.findElement(By.name("test"));
-//        element.get
         String loginBtnText = element.getText();
         i("LOGIN BUTTON LANGUAGE:   " + loginBtnText);
-        if(!new LanguageChecker().checkLanguage(loginBtnText, LanguageChecker.Language.ARABIC))
-            TestManager.failTest("Wrong language displayed");
-            element.click();
+        element.click();
         i("Click on Login btn");
         if(!testHelper.waitWhileElementExist(xpathLoginField, 15000))
             e("Login field was not found");
@@ -83,6 +78,8 @@ public class Login extends Screen{
         // wait tab bar
         if (testHelper.waitWhileElementExist(xpathTabBar, 15000))
             i("LOGIN PASSED");
-        else TestManager.failTest("LOGIN FAILED");
+        else return false;
+        return true;
     }
+
 }

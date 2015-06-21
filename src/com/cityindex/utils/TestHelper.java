@@ -1,6 +1,8 @@
 package com.cityindex.utils;
 
+import com.cityindex.exception.TestException;
 import com.cityindex.manager.TestManager;
+import com.cityindex.param.ConfigParam;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -9,9 +11,15 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.awt.*;
+import java.awt.image.PixelGrabber;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Random;
+
+import static com.cityindex.utils.LoggerUtil.i;
 
 public class TestHelper {
 
@@ -19,16 +27,18 @@ public class TestHelper {
     protected static final int SWIPE_RIGHT = 0;
     protected static final int SWIPE_DOWN = 1;
     protected static final int SWIPE_UP = 2;
+    protected AppiumDriver driver;
+    protected TestManager testManager;
+    private ConfigManager configManager;
+    private Process process;
 
-    public TestHelper (AppiumDriver driver) {
-        this.driver = driver;
+    public TestHelper (TestManager testManager) {
+        this.testManager = testManager;
+        this.driver = testManager.getDriver();
 
     }
 
-    protected AppiumDriver driver;
-    private ConfigManager configManager;
-    private Process process;
-    private TestManager testManager;
+    //For implementation common methods to use appium driver
 
     private void launchServer() {
         new Thread(new Runnable() {
@@ -36,7 +46,7 @@ public class TestHelper {
                 String[] commands = new String[]{
                         "/usr/local/bin/appium",
                         "-U",
-                        configManager.getProperty(ConfigurationParametersEnum.IOS_DEVICE_ID.name())
+                        configManager.getProperty(ConfigParam.IOS_DEVICE_ID.name())
                 };
 
                 try {
@@ -301,4 +311,55 @@ public class TestHelper {
         return true;
     }
 
+    /*** comparing 2 images
+     *  method arguments should be string value of the file path
+     *  that should consist of /data/local/tmp/filename.png
+     *  where filename.png is the name of your screenshot image
+     ***/
+    public boolean compareTwoImages(String img1path, String img2path) throws TestException {
+        if(!new File(img1path).exists() || !new File(img2path).exists())
+            testManager.retest("Some of screenshots not found:\n" +
+                    img1path + "\n" +
+                    img2path);
+        Image image1 = Toolkit.getDefaultToolkit().getImage(img1path);
+        Image image2 = Toolkit.getDefaultToolkit().getImage(img2path);
+
+        try {
+            PixelGrabber grab1 = new PixelGrabber(image1, 0, 0, -1, -1, false);
+            PixelGrabber grab2 = new PixelGrabber(image2, 0, 0, -1, -1, false);
+            int[] data1 = null;
+
+            if (grab1.grabPixels()) {
+                int width = grab1.getWidth();
+                int height = grab1.getHeight();
+                data1 = new int[width * height];
+                data1 = (int[]) grab1.getPixels();
+            }
+
+            int[] data2 = null;
+
+            if (grab2.grabPixels()) {
+                int width = grab2.getWidth();
+                int height = grab2.getHeight();
+                data2 = new int[width * height];
+                data2 = (int[]) grab2.getPixels();
+            }
+            i("Pixels equal: " + java.util.Arrays.equals(data1, data2));
+            return java.util.Arrays.equals(data1, data2);
+
+        } catch (InterruptedException e1) {
+            e1.printStackTrace();
+        }
+        throw new TestException("Error in compare image", driver).retest();
+    }
+
+    public static String getRandomString(int length) {
+        Random rnd = new Random();
+        StringBuilder sb = new StringBuilder( length );
+        for(int i = 0; i < length; i++) {
+            sb.append(Constants.AB.charAt(rnd.nextInt(Constants.AB.length())));
+        }
+        return sb.toString();
+    }
 }
+

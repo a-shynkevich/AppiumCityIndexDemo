@@ -22,7 +22,7 @@ public class TestException extends Exception{
         for(StackTraceElement stackTraceElement : stackTrace) {
             System.out.println(stackTraceElement.toString());
         }
-        driver.closeApp();
+        driver.quit();
         return this;
     }
 
@@ -33,7 +33,7 @@ public class TestException extends Exception{
         for(StackTraceElement stackTraceElement : stackTrace) {
             System.out.println(stackTraceElement.toString());
         }
-        driver.closeApp();
+        driver.quit();
         return this;
     }
 

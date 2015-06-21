@@ -19,7 +19,7 @@ public class PropertiesManager {
             loadProperties();
         } catch (IOException e) {
             e.printStackTrace();
-            closeApp("Unable to load configuration file: " + MainConstants.CONFIGURATION_FILE_PATH);
+            closeApp("Unable to load configuration file: " + Constants.CONFIGURATION_FILE_PATH);
         }
     }
 
@@ -36,7 +36,7 @@ public class PropertiesManager {
     }
 
     private void loadProperties() throws IOException {
-        File configProperties = new File(MainConstants.CONFIGURATION_FILE_PATH);
+        File configProperties = new File(Constants.CONFIGURATION_FILE_PATH);
         FileInputStream fileInput = new FileInputStream(configProperties);
         Properties properties = new Properties();
         properties.load(fileInput);
