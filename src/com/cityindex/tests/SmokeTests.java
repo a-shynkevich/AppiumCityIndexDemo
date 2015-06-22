@@ -18,11 +18,11 @@ public class SmokeTests extends Login {
         }
     }
 
-    @PreCondition(preConditions = {Condition.LOGIN} ,
+    @PreCondition(preConditions = {Condition.NONE} ,
             testTitle = "Test Demo",
             testId = 12345)
     public void testCase12345() throws TestException {
-        if(!signIn()) {
+        if(!signIn("dm538902", "password")) {
             testManager.failTest("LOGIN FAILED");
         }
         testManager.testCaseInfo.setStatusId(Status.PASSED);

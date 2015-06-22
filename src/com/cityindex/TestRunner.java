@@ -52,10 +52,13 @@ public class TestRunner {
         }
         capabilities.setCapability("platformVersion", testManager.getOsDevice());
         String deviceName = testManager.getDeviceName();
-        capabilities.setCapability("deviceName", deviceName);
-        if(!deviceName.toLowerCase().contains("simulator")){
-            capabilities.setCapability("udid", testManager.getDeviceId());
-        }
+        capabilities.setCapability("deviceName", "iPhone 6");
+//        if(!deviceName.toLowerCase().contains("simulator")){
+//            capabilities.setCapability("udid", testManager.getDeviceId());
+//            capabilities.setCapability("deviceName", deviceName);
+//        }else {
+//            capabilities.setCapability("deviceName", testManager.getDeviceName().replace("Simulator", ""));
+//        }
 //        capabilities.setCapability("bundleid", TestManager.configManager.getProperty(ConfigurationParametersEnum.IOS_DEVICE_ID.name()));
         //        capabilities.setCapability("language", "ar");
         capabilities.setCapability("app",app.getAbsolutePath());
