@@ -42,7 +42,6 @@ public class TestRunner {
         if(!paramsParser.parse(arguments))
             return;
         testManager = TestManager.getInstance();
-        testHelper = new TestHelper(testManager);
 
         DesiredCapabilities capabilities = new DesiredCapabilities();
         File app = new File(testManager.getPathToBuild());
@@ -68,6 +67,7 @@ public class TestRunner {
             e.printStackTrace();
         }
         testManager.setDriver(driver);
+        testHelper = new TestHelper(testManager);
         driver = testManager.getDriver();
         parseAnnotations();
         try {

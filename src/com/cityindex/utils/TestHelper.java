@@ -104,7 +104,7 @@ public class TestHelper {
         long startTime = System.currentTimeMillis();
 
         while (findElement(by, true) == null){
-            if (System.currentTimeMillis() - startTime > 100) {
+            if (System.currentTimeMillis() - startTime > 1000) {
                 log("wait while element by "+by.toString() + " is present.");
             }
             if (System.currentTimeMillis() - startTime >= waitTimeMs){

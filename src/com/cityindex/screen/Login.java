@@ -1,7 +1,6 @@
 package com.cityindex.screen;
 
 import com.cityindex.exception.TestException;
-import com.cityindex.manager.TestManager;
 import com.cityindex.utils.Constants;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
@@ -36,12 +35,16 @@ public class Login extends Screen{
             element = driver.findElement(xpathRequestError);
             element.click();
         }
-        if(!testHelper.waitWhileElementExist(xpathForLoginBtnInMarkets, 15000)){
+
+        if (driver.findElement(xpathForLoginBtnInMarkets).isDisplayed()){
+            System.out.println("TEST");
+        }
+        if(!testHelper.waitWhileElementExist(By.name("Login"), 15000)){
             testManager.retest("Login button in markets was not found");
         }
         testManager.addStep("test");
         testManager.testCaseInfo.writeResult("result.json");
-        element = driver.findElement(xpathForLoginBtnInMarkets);
+        element = driver.findElement(By.name("Login"));
         String loginBtnText = element.getText();
         i("LOGIN BUTTON LANGUAGE:   " + loginBtnText);
         element.click();
