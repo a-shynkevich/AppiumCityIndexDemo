@@ -6,25 +6,22 @@ import com.cityindex.exception.TestException;
 import com.cityindex.json.Status;
 import com.cityindex.screen.Login;
 
-public class LoginTests extends Login {
-    public LoginTests(String... args) {
+public class SmokeTests extends Login {
+    public SmokeTests(String... args) {
         super(args);
     }
 
     @Override
     public void runTest(String testMethod) throws TestException {
-//        super.setUp();
         switch (testMethod){
-            case "testDemo": testCase12345();
+            case "12345": testCase12345();
                 break;
             case "":
                 break;
         }
-//        super.tearDown();
-
     }
 
-    @PreCondition(preConditions = {Condition.NONE} ,
+    @PreCondition(preConditions = {Condition.LOGIN} ,
             testTitle = "Test Demo",
             testId = 12345)
     public void testCase12345() throws TestException {

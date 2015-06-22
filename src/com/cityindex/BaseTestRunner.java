@@ -1,9 +1,9 @@
 package com.cityindex;
 
 import com.cityindex.exception.TestException;
-import com.cityindex.manager.TestManager;
+import com.cityindex.param.ParamsParser;
 import com.cityindex.screen.Screen;
-import com.cityindex.tests.LoginTests;
+import com.cityindex.tests.SmokeTests;
 
 
 
@@ -18,17 +18,18 @@ public class BaseTestRunner {
 
     protected static void runTest(String [] args) {
         Screen screen = null;
-
-        switch ("LoginTests"){
-            case "LoginTests":
-            screen = new LoginTests(args);
+        ParamsParser paramsParser = ParamsParser.getInstance();
+        paramsParser.parse(args);
+        switch (paramsParser.getTestClass()){
+            case "SmokeTests":
+            screen = new SmokeTests(args);
                 break;
             case "":
                 break;
         }
-        screen.setUp();
+//        screen.setUp();
         try {
-            screen.runTest("testDemo");
+            screen.runTest(paramsParser.getTestId());
         } catch (TestException e) {
             e.printStackTrace();
         }
