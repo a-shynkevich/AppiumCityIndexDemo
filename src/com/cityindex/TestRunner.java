@@ -4,8 +4,10 @@ package com.cityindex;
 import com.cityindex.annotation.Condition;
 import com.cityindex.annotation.PostCondition;
 import com.cityindex.annotation.PreCondition;
+import com.cityindex.assistant.Preparer;
 import com.cityindex.exception.TestException;
 import com.cityindex.manager.TestManager;
+import com.cityindex.param.ConfigParam;
 import com.cityindex.param.ParamsParser;
 import com.cityindex.utils.TestHelper;
 import io.appium.java_client.AppiumDriver;
@@ -30,8 +32,8 @@ public class TestRunner {
     protected AppiumDriver driver;
     protected String[] arguments;
 
-    public TestRunner(String [] args){
-        arguments = args;
+    public void setArguments(String[] arguments) {
+        this.arguments = arguments;
     }
 
     protected void setUp(){
@@ -113,8 +115,10 @@ public class TestRunner {
     private void executeCondition(Condition condition) throws TestException {
         i("Annotation condition : " + condition.name());
         testManager.addStep("Annotation condition:" + condition.name());
+        Preparer preparer = new Preparer();
         switch (condition) {
             case LOGIN:
+                preparer.login(ConfigParam.LOGIN, ConfigParam.PASSWORD);
                 break;
             default: break;
         }

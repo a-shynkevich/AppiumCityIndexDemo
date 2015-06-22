@@ -13,7 +13,7 @@ public class BaseTestRunner {
 
     public static void main (String... args){
         String[] arguments = args;
-            runTest(arguments);
+        runTest(arguments);
     }
 
     protected static void runTest(String [] args) {
@@ -22,12 +22,13 @@ public class BaseTestRunner {
         paramsParser.parse(args);
         switch (paramsParser.getTestClass()){
             case "SmokeTests":
-            screen = new SmokeTests(args);
+                screen = new SmokeTests();
+                screen.setArguments(args);
                 break;
             case "":
                 break;
         }
-//        screen.setUp();
+        screen.setUp();
         try {
             screen.runTest(paramsParser.getTestId());
         } catch (TestException e) {

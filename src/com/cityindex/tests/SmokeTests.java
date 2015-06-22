@@ -7,9 +7,6 @@ import com.cityindex.json.Status;
 import com.cityindex.screen.Login;
 
 public class SmokeTests extends Login {
-    public SmokeTests(String... args) {
-        super(args);
-    }
 
     @Override
     public void runTest(String testMethod) throws TestException {

@@ -2,6 +2,7 @@ package com.cityindex.screen;
 
 import com.cityindex.exception.TestException;
 import com.cityindex.manager.TestManager;
+import com.cityindex.utils.Constants;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -10,30 +11,26 @@ import static com.cityindex.utils.LoggerUtil.i;
 
 public class Login extends Screen{
 
-      private WebElement element;
-
-    public Login(String... args) {
-        super(args);
-    }
+    private WebElement element;
 
     @Override
     public void runTest(String testId) throws TestException {
     }
 
-    public boolean signIn() throws TestException {
+    public boolean signIn(String login, String password) throws TestException {
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        By xpathRequestError = By.xpath("//UIAApplication[1]/UIAWindow[4]/UIAAlert[1]/UIACollectionView[1]/UIACollectionCell[1]/UIAButton[1]");
-        By xpathForLoginBtnInMarkets = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIANavigationBar[1]/UIAButton[2]");
-        By xpathLoginField = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIATextField[1]");
-        By xpathPasswordField = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIASecureTextField[1]");
-        By xpathLoginBtn = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIAButton[1]");
-        By xpathContinueBtn = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIAButton[1]");
-        By xpathCloseBtn = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIAButton[1]");
-        By xpathTabBar = By.xpath("//UIAApplication[1]/UIAWindow[1]/UIATabBar[1]");
+        By xpathRequestError = By.xpath(Constants.LoginScreen.xPath.REQUEST_ERROR);
+        By xpathForLoginBtnInMarkets = By.xpath(Constants.LoginScreen.xPath.LOGIN_BUTTON_IN_MARKETS);
+        By xpathLoginField = By.xpath(Constants.LoginScreen.xPath.LOGIN_FIELD);
+        By xpathPasswordField = By.xpath(Constants.LoginScreen.xPath.PASSWORD_FIELD);
+        By xpathLoginBtn = By.xpath(Constants.LoginScreen.xPath.LOGIN_BUTTON);
+        By xpathContinueBtn = By.xpath(Constants.LoginScreen.xPath.CONTINUE_BUTTON);
+        By xpathCloseBtn = By.xpath(Constants.LoginScreen.xPath.CLOSE_BUTTON);
+        By xpathTabBar = By.xpath(Constants.Common.xPath.TAB_BAR);
 
         if (testHelper.waitWhileElementExist(xpathRequestError, 5000)){
             element = driver.findElement(xpathRequestError);
@@ -51,18 +48,16 @@ public class Login extends Screen{
         i("Click on Login btn");
         if(!testHelper.waitWhileElementExist(xpathLoginField, 15000))
             e("Login field was not found");
-        String login = "dm348630";
-        String pass = "password";
         // Enter Login
         element = driver.findElement(xpathLoginField);
         MobileElement mobileElement = (MobileElement) element;
         mobileElement.setValue(login);
         i("Enter login " + login);
-        // Enter Pasword
+        // Enter Password
         element = driver.findElement(xpathPasswordField);
         mobileElement = (MobileElement) element;
-        mobileElement.setValue(pass);
-        i("Enter password " + pass);
+        mobileElement.setValue(password);
+        i("Enter password " + password);
         //Click Login button
         element = driver.findElement(xpathLoginBtn);
         element.click();
@@ -80,10 +75,9 @@ public class Login extends Screen{
         element.click();
         i("Click on Close button");
         // wait tab bar
-        if (testHelper.waitWhileElementExist(xpathTabBar, 15000))
-            i("LOGIN PASSED");
-        else return false;
+        if (!testHelper.waitWhileElementExist(xpathTabBar, 15000))
+            return false;
+        i("LOGIN PASSED");
         return true;
     }
-
 }
