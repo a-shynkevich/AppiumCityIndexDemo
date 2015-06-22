@@ -10,10 +10,14 @@ import static com.cityindex.utils.LoggerUtil.i;
 
 public class Login extends Screen{
 
-    private WebElement element;
+      private WebElement element;
 
-    public Login(TestManager testManager) {
-        super(testManager);
+    public Login(String... args) {
+        super(args);
+    }
+
+    @Override
+    public void runTest(String testId) throws TestException {
     }
 
     public boolean signIn() throws TestException {

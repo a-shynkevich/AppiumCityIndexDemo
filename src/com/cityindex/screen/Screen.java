@@ -1,23 +1,15 @@
 package com.cityindex.screen;
 
+import com.cityindex.TestRunner;
 import com.cityindex.exception.TestException;
-import com.cityindex.manager.TestManager;
-import com.cityindex.utils.TestHelper;
-import io.appium.java_client.AppiumDriver;
 
+public abstract class Screen extends TestRunner{
 
-public class Screen{
-    protected TestManager testManager;
-    protected TestHelper testHelper;
-    protected AppiumDriver driver;
-
-    public Screen(TestManager testManager) {
-        this.testManager = testManager;
-        this.driver = this.testManager.getDriver();
-        testHelper = new TestHelper(this.testManager);
+    public Screen(String [] args) {
+        super(args);
     }
 
-    public void runTest(String test) throws TestException{
-    }
+    public abstract void runTest(String testId) throws TestException;
+
     //For implementation common methods to test app
 }

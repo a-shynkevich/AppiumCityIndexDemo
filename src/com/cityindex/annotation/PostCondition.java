@@ -9,5 +9,4 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PostCondition {
     Condition[] postConditions() default {Condition.NONE};
-    String profileName() default "Igor";
 }

@@ -43,7 +43,6 @@ public class TestManager {
         osDevice = paramsParser.getDeviceOS() == null ?
                 configManager.getProperty(ConfigParam.IOS_PLATFORM_VERSION.name()) : paramsParser.getDeviceOS();
         deviceName = paramsParser.getDeviceName();
-
     }
 
     public void setDriver(AppiumDriver driver) {
