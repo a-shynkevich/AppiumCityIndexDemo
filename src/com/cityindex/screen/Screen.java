@@ -1,11 +1,14 @@
 package com.cityindex.screen;
 
-import com.cityindex.TestRunner;
-import com.cityindex.exception.TestException;
+import com.cityindex.manager.TestManager;
+import com.cityindex.assistant.AppiumHelper;
 
-public abstract class Screen extends TestRunner{
+public abstract class Screen extends AppiumHelper {
 
-    public abstract void runTest(String testId) throws TestException;
+    public Screen(TestManager testManager) {
+        super(testManager);
+    }
+
 
     //For implementation common methods to test app
 }

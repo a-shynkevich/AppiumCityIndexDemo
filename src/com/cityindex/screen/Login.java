@@ -1,6 +1,7 @@
 package com.cityindex.screen;
 
 import com.cityindex.exception.TestException;
+import com.cityindex.manager.TestManager;
 import com.cityindex.utils.Constants;
 import io.appium.java_client.MobileElement;
 import org.openqa.selenium.By;
@@ -12,8 +13,8 @@ public class Login extends Screen{
 
     private WebElement element;
 
-    @Override
-    public void runTest(String testId) throws TestException {
+    public Login(TestManager testManager) {
+        super(testManager);
     }
 
     public boolean signIn(String login, String password) throws TestException {
@@ -31,25 +32,20 @@ public class Login extends Screen{
         By xpathCloseBtn = By.xpath(Constants.LoginScreen.xPath.CLOSE_BUTTON);
         By xpathTabBar = By.xpath(Constants.Common.xPath.TAB_BAR);
 
-        if (testHelper.waitWhileElementExist(xpathRequestError, 5000)){
+        if (waitWhileElementExist(xpathRequestError, 5000)){
             element = driver.findElement(xpathRequestError);
             element.click();
         }
-
-        if (driver.findElement(xpathForLoginBtnInMarkets).isDisplayed()){
-            System.out.println("TEST");
-        }
-        if(!testHelper.waitWhileElementExist(By.name("Login"), 15000)){
+        if(!waitWhileElementExist(xpathForLoginBtnInMarkets, 15000)){
             testManager.retest("Login button in markets was not found");
         }
-        testManager.addStep("test");
         testManager.testCaseInfo.writeResult("result.json");
         element = driver.findElement(By.name("Login"));
         String loginBtnText = element.getText();
         i("LOGIN BUTTON LANGUAGE:   " + loginBtnText);
         element.click();
         i("Click on Login btn");
-        if(!testHelper.waitWhileElementExist(xpathLoginField, 15000))
+        if(!waitWhileElementExist(xpathLoginField, 15000))
             e("Login field was not found");
         // Enter Login
         element = driver.findElement(xpathLoginField);
@@ -66,19 +62,19 @@ public class Login extends Screen{
         element.click();
         i("Click on Login btn");
         //Wait warning screen and click on Continue button
-        if (!testHelper.waitWhileElementExist(xpathContinueBtn, 20000))
+        if (!waitWhileElementExist(xpathContinueBtn, 20000))
             e("Continue btn was not found");
         element = driver.findElement(xpathContinueBtn);
         element.click();
         i("Click on continue button");
         //Wait Tutorial and click close button
-        if (!testHelper.waitWhileElementExist(xpathCloseBtn, 15000))
+        if (!waitWhileElementExist(xpathCloseBtn, 15000))
             e("Close button was not found");
         element = driver.findElement(xpathCloseBtn);
         element.click();
         i("Click on Close button");
         // wait tab bar
-        if (!testHelper.waitWhileElementExist(xpathTabBar, 15000))
+        if (!waitWhileElementExist(xpathTabBar, 15000))
             return false;
         i("LOGIN PASSED");
         return true;

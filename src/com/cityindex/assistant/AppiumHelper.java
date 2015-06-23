@@ -1,8 +1,10 @@
-package com.cityindex.utils;
+package com.cityindex.assistant;
 
 import com.cityindex.exception.TestException;
 import com.cityindex.manager.TestManager;
 import com.cityindex.param.ConfigParam;
+import com.cityindex.utils.ConfigManager;
+import com.cityindex.utils.Constants;
 import io.appium.java_client.AppiumDriver;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -21,7 +23,7 @@ import java.util.Random;
 
 import static com.cityindex.utils.LoggerUtil.i;
 
-public class TestHelper {
+public class AppiumHelper {
 
     protected static final int SWIPE_LEFT = -1;
     protected static final int SWIPE_RIGHT = 0;
@@ -32,7 +34,7 @@ public class TestHelper {
     private ConfigManager configManager;
     private Process process;
 
-    public TestHelper (TestManager testManager) {
+    public AppiumHelper(TestManager testManager) {
         this.testManager = testManager;
         this.driver = testManager.getDriver();
 

@@ -13,7 +13,6 @@ import java.lang.annotation.Target;
 public @interface PreCondition {
     Condition[] preConditions() default {Condition.NONE};
 
-    boolean checkInternetState() default true;
     // prepareLogin
     ConfigParam login() default ConfigParam.LOGIN;
     ConfigParam password() default ConfigParam.PASSWORD;

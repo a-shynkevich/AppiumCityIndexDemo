@@ -9,7 +9,7 @@ import com.cityindex.exception.TestException;
 import com.cityindex.manager.TestManager;
 import com.cityindex.param.ConfigParam;
 import com.cityindex.param.ParamsParser;
-import com.cityindex.utils.TestHelper;
+import com.cityindex.assistant.AppiumHelper;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.ios.IOSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -23,10 +23,10 @@ import java.net.URL;
 import static com.cityindex.utils.LoggerUtil.e;
 import static com.cityindex.utils.LoggerUtil.i;
 
-public class TestRunner {
+public abstract class TestRunner {
     protected PreCondition mPreCondition = null;
     protected PostCondition mPostCondition = null;
-    protected TestHelper testHelper;
+    protected AppiumHelper appiumHelper;
     protected TestManager testManager;
     protected ParamsParser paramsParser;
     protected AppiumDriver driver;
@@ -51,13 +51,12 @@ public class TestRunner {
         }
         capabilities.setCapability("platformVersion", testManager.getOsDevice());
         String deviceName = testManager.getDeviceName();
-        capabilities.setCapability("deviceName", "iPhone 6");
-//        if(!deviceName.toLowerCase().contains("simulator")){
-//            capabilities.setCapability("udid", testManager.getDeviceId());
-//            capabilities.setCapability("deviceName", deviceName);
-//        }else {
-//            capabilities.setCapability("deviceName", testManager.getDeviceName().replace("Simulator", ""));
-//        }
+        if(!deviceName.toLowerCase().contains("simulator")){
+            capabilities.setCapability("udid", testManager.getDeviceId());
+            capabilities.setCapability("deviceName", deviceName);
+        }else {
+            capabilities.setCapability("deviceName", testManager.getDeviceName().replace(" Simulator", ""));
+        }
 //        capabilities.setCapability("bundleid", TestManager.configManager.getProperty(ConfigurationParametersEnum.IOS_DEVICE_ID.name()));
         //        capabilities.setCapability("language", "ar");
         capabilities.setCapability("app",app.getAbsolutePath());
@@ -67,7 +66,7 @@ public class TestRunner {
             e.printStackTrace();
         }
         testManager.setDriver(driver);
-        testHelper = new TestHelper(testManager);
+        appiumHelper = new AppiumHelper(testManager);
         driver = testManager.getDriver();
         parseAnnotations();
         try {
@@ -76,6 +75,8 @@ public class TestRunner {
             e.printStackTrace();
         }
     }
+
+    public abstract void runTest(String testId) throws TestException;
 
     private void parseAnnotations() {
         for(Method m: this.getClass().getMethods()) {
@@ -118,10 +119,10 @@ public class TestRunner {
     private void executeCondition(Condition condition) throws TestException {
         i("Annotation condition : " + condition.name());
         testManager.addStep("Annotation condition:" + condition.name());
-        Preparer preparer = new Preparer();
+        Preparer preparer = new Preparer(testManager);
         switch (condition) {
             case LOGIN:
-                preparer.login(ConfigParam.LOGIN, ConfigParam.PASSWORD);
+                preparer.login(mPreCondition.login(), mPreCondition.password());
                 break;
             default: break;
         }
